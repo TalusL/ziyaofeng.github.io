@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<title>Java垃圾回收机制 - 紫耀风的博客</title>
+<base href="/">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+<link rel="canonical" href="http://ziyaofeng.github.io/post/可能是把Java内存区域讲的最清楚的一篇文章/">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="translucent">
+<meta name="description" content="基本问题： 介绍下 Java 内存区域（运行时数据区） Java 对象的创建过程（五步，建议能默写出来并且要知道每一步虚拟机做了什么） 对象的访问定位的两种方式（句柄和直接指针两种方式）  拓展问题: String类和常量池 8种基本类型的包装类和常量池  1   概述对于 Java 程序员来说，在虚拟机自动内存管理机制下，不再需要像C/C++程序开发程序员这样为内一个 new 操作去写对应的 d">
+<meta name="keywords" content="java基础">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Java垃圾回收机制">
+<meta property="og:url" content="http://ziyaofeng.github.io/post/可能是把Java内存区域讲的最清楚的一篇文章/index.html">
+<meta property="og:site_name" content="紫耀风的博客">
+<meta property="og:description" content="基本问题： 介绍下 Java 内存区域（运行时数据区） Java 对象的创建过程（五步，建议能默写出来并且要知道每一步虚拟机做了什么） 对象的访问定位的两种方式（句柄和直接指针两种方式）  拓展问题: String类和常量池 8种基本类型的包装类和常量池  1   概述对于 Java 程序员来说，在虚拟机自动内存管理机制下，不再需要像C/C++程序开发程序员这样为内一个 new 操作去写对应的 d">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/4/27/16306a34cd8a4354?w=513&h=404&f=png&s=132068">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/25/16570344a29c3433?w=599&h=250&f=png&s=8946">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-9-14/26038433.jpg">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/22/16561e59a4135869?w=950&h=279&f=png&s=28529">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/22/16561e59a40a2c3d?w=1426&h=333&f=png&s=26346">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/4/27/16306b9573968946?w=786&h=362&f=png&s=109201">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/4/27/16306ba3a41b6b65?w=766&h=353&f=png&s=99172">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/22/16561e59a59c0873?w=698&h=355&f=png&s=10449">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/22/16561e59a4d13f92?w=593&h=603&f=png&s=22265">
+<meta property="og:updated_time" content="2018-09-21T01:02:47.054Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java垃圾回收机制">
+<meta name="twitter:description" content="基本问题： 介绍下 Java 内存区域（运行时数据区） Java 对象的创建过程（五步，建议能默写出来并且要知道每一步虚拟机做了什么） 对象的访问定位的两种方式（句柄和直接指针两种方式）  拓展问题: String类和常量池 8种基本类型的包装类和常量池  1   概述对于 Java 程序员来说，在虚拟机自动内存管理机制下，不再需要像C/C++程序开发程序员这样为内一个 new 操作去写对应的 d">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2018/4/27/16306a34cd8a4354?w=513&h=404&f=png&s=132068">
+<link rel="stylesheet" href="/theme.85c146ef9fd91888aa82.css">
+<link rel="stylesheet" href="/styles.e0b2c88907193eccbec9.css">
+<script src="/config.c421b678110bc427199c.js"></script>
+</head>
+<body>
+<is-root></is-root>
+<script src="/runtime.ec2944dd8b20ec099bf3.js"></script>
+<script src="/polyfills.ed2657d804c224393fca.js"></script>
+<script src="/main.23deab5e379f8eb14463.zh-Hans.js"></script></body>
+</html>

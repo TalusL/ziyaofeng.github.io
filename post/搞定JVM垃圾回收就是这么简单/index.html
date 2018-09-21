@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<title>JVM垃圾回收 - 紫耀风的博客</title>
+<base href="/">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+<link rel="canonical" href="http://ziyaofeng.github.io/post/搞定JVM垃圾回收就是这么简单/">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="translucent">
+<meta name="description" content="上文回顾：《可能是把Java内存区域讲的最清楚的一篇文章》 写在前面本节常见面试题：问题答案在文中都有提到  如何判断对象是否死亡（两种方法）。 简单的介绍一下强引用、软引用、弱引用、虚引用（虚引用与软引用和弱引用的区别、使用软引用能带来的好处）。 如何判断一个常量是废弃常量 如何判断一个类是无用的类 垃圾收集有哪些算法，各自的特点？ HotSpot为什么要分为新生代和老年代？ 常见的垃圾回收器有">
+<meta name="keywords" content="java基础">
+<meta property="og:type" content="website">
+<meta property="og:title" content="JVM垃圾回收">
+<meta property="og:url" content="http://ziyaofeng.github.io/post/搞定JVM垃圾回收就是这么简单/index.html">
+<meta property="og:site_name" content="紫耀风的博客">
+<meta property="og:description" content="上文回顾：《可能是把Java内存区域讲的最清楚的一篇文章》 写在前面本节常见面试题：问题答案在文中都有提到  如何判断对象是否死亡（两种方法）。 简单的介绍一下强引用、软引用、弱引用、虚引用（虚引用与软引用和弱引用的区别、使用软引用能带来的好处）。 如何判断一个常量是废弃常量 如何判断一个类是无用的类 垃圾收集有哪些算法，各自的特点？ HotSpot为什么要分为新生代和老年代？ 常见的垃圾回收器有">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-26/29176325.jpg">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/8/25/16570344a29c3433?w=599&h=250&f=png&s=8946">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-27/89294547.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-26/25178350.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-26/10317146.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-26/28954286.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-26/28128785.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-27/11034259.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-27/72762049.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-27/1142723.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-27/63707281.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-27/90984624.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-27/94057049.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-27/41460955.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-27/46873026.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-27/22018368.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-27/22018368.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-27/82825079.jpg">
+<meta property="og:updated_time" content="2018-09-21T01:01:18.588Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM垃圾回收">
+<meta name="twitter:description" content="上文回顾：《可能是把Java内存区域讲的最清楚的一篇文章》 写在前面本节常见面试题：问题答案在文中都有提到  如何判断对象是否死亡（两种方法）。 简单的介绍一下强引用、软引用、弱引用、虚引用（虚引用与软引用和弱引用的区别、使用软引用能带来的好处）。 如何判断一个常量是废弃常量 如何判断一个类是无用的类 垃圾收集有哪些算法，各自的特点？ HotSpot为什么要分为新生代和老年代？ 常见的垃圾回收器有">
+<meta name="twitter:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-8-26/29176325.jpg">
+<link rel="stylesheet" href="/theme.85c146ef9fd91888aa82.css">
+<link rel="stylesheet" href="/styles.e0b2c88907193eccbec9.css">
+<script src="/config.c421b678110bc427199c.js"></script>
+</head>
+<body>
+<is-root></is-root>
+<script src="/runtime.ec2944dd8b20ec099bf3.js"></script>
+<script src="/polyfills.ed2657d804c224393fca.js"></script>
+<script src="/main.23deab5e379f8eb14463.zh-Hans.js"></script></body>
+</html>
